@@ -816,7 +816,7 @@ class VSCtlContext(object):
         column_schema = ovsrec_row._table.columns[column]
         datum = ovs.db.data.Datum.from_json(
             column_schema.type, value_json, self.symtab)
-        return datum.to_python(ovs.db.idl._uuid_to_row)
+        return datum.to_python(ovsrec_row._uuid_to_row)
 
     def set_column(self, ovsrec_row, column, value_json):
         column_schema = ovsrec_row._table.columns[column]
@@ -865,7 +865,7 @@ class VSCtlContext(object):
         else:
             values = getattr(ovsrec_row, column, None)
             default = ovs.db.data.Datum.default(column_schema.type)
-            default = default.to_python(ovs.db.idl._uuid_to_row).to_json()
+            default = default.to_python(ovsrec_row._uuid_to_row).to_json()
             if values == datum:
                 setattr(ovsrec_row, column, default)
 
@@ -2146,7 +2146,7 @@ class VSCtl(object):
         column, value_json = column_value
         column_schema = ovsrec_row._table.columns[column]
         value = ovs.db.data.Datum.from_json(
-            column_schema.type, value_json).to_python(ovs.db.idl._uuid_to_row)
+            column_schema.type, value_json).to_python(ovsrec_row._uuid_to_row)
         datum = getattr(ovsrec_row, column)
         if column_schema.type.is_map():
             for k, v in value.items():
@@ -2353,7 +2353,7 @@ class VSCtl(object):
         # assuming that default datum is empty.
         default_datum = ovs.db.data.Datum.default(column_schema.type)
         setattr(ovsrec_row, column,
-                default_datum.to_python(ovs.db.idl._uuid_to_row))
+                default_datum.to_python(ovsrec_row._uuid_to_row))
         ctx.invalidate_cache()
 
     def _cmd_clear(self, ctx, command):
